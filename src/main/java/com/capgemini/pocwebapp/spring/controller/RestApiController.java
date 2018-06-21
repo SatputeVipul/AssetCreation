@@ -29,7 +29,7 @@ public class RestApiController {
 	
 	// -------------------Retrieve All Users---------------------------------------------
 
-		@RequestMapping(value = "/user", method = RequestMethod.GET)
+		@RequestMapping(value = "/user/", method = RequestMethod.GET)
 		public ResponseEntity<List<User>> listAllUsers() {
 			List<User> users = userService.findAllUsers();
 			if (users.isEmpty()) {
@@ -38,6 +38,4 @@ public class RestApiController {
 			}
 			return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 		}
-		
-		
 }

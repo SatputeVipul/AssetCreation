@@ -226,6 +226,8 @@
 				<a href ="<c:url value='/usermenuright' />"
 				class="w3-text-white w3-padding w3-border w3-round-xxlarge" id="37"><i
 				class="fa fa-tv fa-fw w3-margin-right"></i>Screen Permission</a>
+				<a href ="<c:url value='/singleUpload' />" class="w3-text-white w3-padding w3-border w3-round-xxlarge" id="41"><i
+				class="fa fa-user-circle-o fa-fw w3-margin-right"></i> Master Data Upload</a>
 		</div>
 	</div>
 		 	</sec:authorize>

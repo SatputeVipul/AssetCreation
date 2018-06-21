@@ -113,5 +113,10 @@ public class UserServiceImpl implements UserService {
 	public void updateList(List<UserInfo> p) throws Exception {
 		dao.updateUserInfos(p);
 		
+	}
+
+	@Override
+	public void uploadUser(List<User> lstUser) throws Exception {
+		dao.uploadUsers(lstUser);		
 	} 
 }

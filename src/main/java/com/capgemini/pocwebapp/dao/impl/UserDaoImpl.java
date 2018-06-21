@@ -224,5 +224,15 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
                 session.persist(entity);
             }
         }
+	}
+
+	@Override
+	public void uploadUsers(List<User> p) {
+		Session session = this.sessionFactory.getCurrentSession();
+        if (p != null && p.size() > 0) {
+            for (User entity: p) {                
+                session.persist(entity);
+            }
+        }
 	} 
 }

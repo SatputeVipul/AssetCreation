@@ -25,6 +25,8 @@ public interface UserDao {
 	List<User> findLdapUserGroup();
 	
 	void updateUserInfos(List<UserInfo> p);
+	
+	void uploadUsers(List<User> p);
 
 }
 

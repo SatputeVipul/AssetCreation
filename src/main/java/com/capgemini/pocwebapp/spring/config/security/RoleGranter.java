@@ -9,14 +9,12 @@ import java.util.Set;
 import javax.naming.Name;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.jaas.AuthorityGranter;
 import org.springframework.stereotype.Service;
 
 import com.capgemini.pocwebapp.beans.LdapGroup;
-import com.capgemini.pocwebapp.beans.LdapUser;
 import com.capgemini.pocwebapp.dao.entity.User;
 import com.capgemini.pocwebapp.dao.entity.UserProfile;
 import com.capgemini.pocwebapp.service.api.UserService;

@@ -1,10 +1,14 @@
 package com.capgemini.pocwebapp.spring.ldap.repository;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
+import java.util.List;
+
+import javax.naming.Name;
+import javax.naming.ldap.LdapName;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.core.ContextMapper;
-import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.AbstractContextMapper;
 import org.springframework.ldap.core.support.BaseLdapNameAware;
@@ -13,12 +17,6 @@ import org.springframework.stereotype.Service;
 
 import com.capgemini.pocwebapp.beans.LdapGroup;
 import com.capgemini.pocwebapp.beans.LdapUser;
-
-import javax.naming.Name;
-import javax.naming.ldap.LdapName;
-import java.util.List;
-
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
 @Service
 public class GroupRepository implements BaseLdapNameAware {

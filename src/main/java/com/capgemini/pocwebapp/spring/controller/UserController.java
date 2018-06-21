@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.capgemini.pocwebapp.dao.entity.FileBucket;
@@ -50,13 +56,41 @@ public class UserController extends BaseController {
 
 	private static String UPLOAD_LOCATION = "D:\\log";
 
+	 public static final String REST_SERVICE_URI = "http://localhost:8080/asset" ;
 	/**
 	 * This method will list all existing users.
 	 */
 	@RequestMapping(value = { "/list" }, method = RequestMethod.GET)
 	public String listUsers(ModelMap model) {
 
-		List<User> users = userService.findAllUsers();
+		 
+		/*List<User> users = userService.findAllUsers();
+		model.addAttribute("users", users);
+		model.addAttribute("loggedinuser", super.getPrincipal());*/
+		
+		List<User> users = new ArrayList();
+		try {
+			URI uri = new URI(REST_SERVICE_URI+"/api/user/");
+			RestTemplate restTemplate = new RestTemplate(); 
+			List<LinkedHashMap<String, Object>> usersMap = restTemplate.getForObject(uri, List.class);
+			if(usersMap!=null){
+				for(LinkedHashMap<String, Object> map : usersMap){
+					System.out.println("User : id="+map.get("id")+", ssoId="+map.get("ssoId")+", firstName="+map.get("firstName")+", lastName="+map.get("lastName"));;
+					User user = new User();
+					user.setSsoId(map.get("ssoId").toString());
+					user.setFirstName(map.get("firstName").toString());
+					user.setLastName(map.get("lastName").toString());
+					user.setEmail(map.get("email").toString());
+					user.setId(Integer.valueOf(map.get("id").toString()));
+					users.add(user);
+				}
+			}else{
+				System.out.println("No user exist----------");
+			}
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		model.addAttribute("users", users);
 		model.addAttribute("loggedinuser", super.getPrincipal());
 		return "userslist";
@@ -305,4 +339,83 @@ public class UserController extends BaseController {
 		}
 	}
 
+/*	@SuppressWarnings("resource")
+	@RequestMapping(value = "/uploadUsers", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public String uploadUsers(@Valid FileBucket fileBucket, BindingResult result, ModelMap model)
+
+	{
+		List<User> users = userService.findAllUsers();
+		List<String> ssoId = new ArrayList<>();
+		// getting ssoID
+		for (int j = 0; j < users.size(); j++) {
+			ssoId.add(users.get(j).getSsoId());
+		}
+
+		if (result.hasErrors()) {
+			System.out.println("validation errors");
+			return "redirect:/singleFileUploader";
+			 return "singleFileUploader"; 
+		} else {
+			try {
+				System.out.println("Fetching file");
+				MultipartFile multipartFile = fileBucket.getFile();
+				// Now do something with file...
+				FileCopyUtils.copy(fileBucket.getFile().getBytes(),
+						new File(UPLOAD_LOCATION + fileBucket.getFile().getOriginalFilename()));
+				String fileName = multipartFile.getOriginalFilename();
+				model.addAttribute("fileName", fileName);
+				System.out.println("This is file name" + fileName);
+				// to save the file
+				InputStream inputStream = null;
+				OutputStream outputStream = null;
+				inputStream = multipartFile.getInputStream();
+				File newFile = new File(UPLOAD_LOCATION + "\\" + fileName);
+				System.out.println("This is the location" + newFile);
+				if (!newFile.exists()) {
+					newFile.createNewFile();
+				}
+				outputStream = new FileOutputStream(newFile);
+				int read = 0;
+				byte[] bytes = new byte[1024];
+
+				while ((read = inputStream.read(bytes)) != -1) {
+					outputStream.write(bytes, 0, read);
+				}
+
+				// this is excel upload
+				List<User> lstUser = new ArrayList<>();
+
+				int i = 1;
+				Workbook workbook;
+
+				workbook = WorkbookFactory.create(new File(UPLOAD_LOCATION + "\\" + fileName));
+				Sheet sheet = workbook.getSheetAt(0);
+				Row row;
+				while (i <= sheet.getLastRowNum()) {
+					User user = new User();
+					row = sheet.getRow(i++);
+					user.setFirstName(row.getCell(0).getStringCellValue());
+					user.setLastName(row.getCell(1).getStringCellValue());
+					user.setSsoId(row.getCell(2).getStringCellValue());
+					user.setPassword(passwordEncoder.encode(row.getCell(3).getStringCellValue()));
+					user.setEmail(row.getCell(5).getStringCellValue());
+					//user.getUserProfiles().add((row.getCell(3).getStringCellValue());
+					for (int j = 0; j < ssoId.size(); j++) {
+						if (!ssoId.contains(user.getUsername())) {
+							lstUser.add(user);
+						}
+					}
+				}
+				System.out.println(lstUser);
+				workbook.close();
+				userService.updateList(lstUser);
+				model.addAttribute("lstUser", lstUser);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return "home";
+		}
+	}*/
 }
